@@ -1,10 +1,37 @@
+let fs;
+try {
+    fs = require('fs');
+} catch (e) {
+    console.error('Error al importar el módulo fs', e);
+}
+
+if (fs) {
+    console.log('El módulo fs se ha importado correctamente');
+}
+
+
 class ProductManager {
 
-    constructor(products) {
-        this.products = [];
+    constructor(path) {
+
+        this.path = path;
+
     }
 
-    addProducts(title, description, price, thumbnail, code, stock) {
+    async read() {
+        //CREO DIRECTORIO
+        await fs.promises.mkdir("./files", { recursive: true })
+
+        //ESCRIBO ARCHIVO
+        await fs.promises.writeFile("./files/" + this.path, "ARCHIVO CREADO")
+
+        //LECTURA DEL ARCHIVO
+        let resultado = await fs.promises.readFile("./files/" + this.path, "utf-8");
+        console.log(resultado)
+    }
+
+
+    async addProduct(title, description, price, thumbnail, code, stock) {
 
         const objeto = {
             title,
@@ -15,46 +42,30 @@ class ProductManager {
             stock
         };
 
-        const existeProducto = this.products.some(product => product.code === objeto.code);
+        await fs.promises.appendFile(this.path, "objeto")
+    }
+    /*
+    async getProducts() {
 
-        if (existeProducto) {
-            console.log(`Ya existe un producto con el código ${objeto.code}`);
-        } else {
-            this.products.push(objeto);
-        }
     }
 
-    getProducts() {
-        console.log(productos1)
-    }
-
-    getProductByCode(id) {
-
-        const existeId = this.products.find(product => product.code === id);
-
-        if (existeId) {
-            console.log(existeId)
-        } else {
-            console.log(`not found, no existe ningun objeto con el id ${id}`)
-        }
+    async getProductById() {
 
     }
+
+    async updateProduct() {
+
+    }
+
+    async deleteProduct() {
+
+    }
+    */
 }
 
-//NUEVA INSTANCIA
-const productos1 = new ProductManager()
+//INSTANCIO LA CLASE CONSTRUCTORA Y DEFINO EL PATH
+const productos1 = new ProductManager("objetos.txt")
 
-//METODO ADDPRODUCTS
-productos1.addProducts("toyota", "toyota corolla, 4 puertas, año 2022", "5000 usd", "https://media.toyota.com.ar/bad046b3-53d6-4b63-bcb9-1fc05aed02cf.png", "123", "10")
-productos1.addProducts("renault", "renault megane, 4 puertas, año 2021", "4000 usd", "https://autotest.com.ar/wp-content/uploads/2021/07/RENAULT-MEGANE-E-TECH.jpg", "234", "15")
-
-// METODO GETPRODUCTS
-productos1.getProducts();
-
-// METODO GETBYCODE
-productos1.getProductByCode("000") // EJEMPLO MALO
-productos1.getProductByCode("123") //EJEMPLO BUENO
-
-
-
-
+//CREO EL DIRECTORIO, ARCHIVO TXT Y LECTURA DEL MISMO
+productos1.read();
+productos1.addProduct("toyota", "toyota corolla, 4 puertas, año 2022", "5000 usd", "https://media.toyota.com.ar/bad046b3-53d6-4b63-bcb9-1fc05aed02cf.png", "123", "10")
