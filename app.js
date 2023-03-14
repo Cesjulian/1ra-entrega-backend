@@ -20,14 +20,13 @@ class ProductManager {
 
     async read() {
         //CREO DIRECTORIO
-        await fs.promises.mkdir("./files", { recursive: true })
+        //await fs.promises.mkdir("./files", { recursive: true })
 
         //ESCRIBO ARCHIVO
-        await fs.promises.writeFile("./files/" + this.path, "ARCHIVO CREADO")
+        await fs.promises.writeFile(/*"./files/" +*/ this.path, "")
 
         //LECTURA DEL ARCHIVO
-        let resultado = await fs.promises.readFile("./files/" + this.path, "utf-8");
-        console.log(resultado)
+        let resultado = await fs.promises.readFile(/*"./files/" +*/ this.path, "utf-8");
     }
 
 
@@ -42,23 +41,40 @@ class ProductManager {
             stock
         };
 
-        await fs.promises.appendFile(this.path, "objeto")
+        const data = JSON.stringify(objeto);
+
+        await fs.promises.appendFile(this.path, data)
     }
+
+    async getProducts(path) {
+
+        const data = await fs.promises.readFile(path, "utf-8");
+        console.log(data)
+
+    }
+
+    async getProductById(path, code) {
+
+        try {
+            const data = await fs.promises.readFile(path, 'utf-8');
+            const items = Object.values(JSON.parse(data));
+            const foundItem = items.code === code;
+            console.log(foundItem)
+
+        } catch (err) {
+            console.log(err)
+        }
+
+    }
+
     /*
-    async getProducts() {
-
-    }
-
-    async getProductById() {
-
-    }
-
     async updateProduct() {
 
     }
-
     async deleteProduct() {
-
+        
+        
+        
     }
     */
 }
@@ -69,3 +85,5 @@ const productos1 = new ProductManager("objetos.txt")
 //CREO EL DIRECTORIO, ARCHIVO TXT Y LECTURA DEL MISMO
 productos1.read();
 productos1.addProduct("toyota", "toyota corolla, 4 puertas, año 2022", "5000 usd", "https://media.toyota.com.ar/bad046b3-53d6-4b63-bcb9-1fc05aed02cf.png", "123", "10")
+productos1.getProducts("objetos.txt"); //PARA OBTENER TODOS LOS OBJETOS
+productos1.getProductById("objetos.txt", "123") // PARA BUSCAR POR CODIGO
